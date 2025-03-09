@@ -9,4 +9,5 @@ from .document_loaders import *
 from .text_chunkers import *
 from .metadata_extractors import *
 from .data_cleaners import *
-from .data_augmentation import * 
+from .data_augmentation import *
+from .adaptive_chunking import * 

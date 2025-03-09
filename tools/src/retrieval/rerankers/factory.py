@@ -12,6 +12,8 @@ from .cross_encoder_reranker import CrossEncoderReranker
 from .mono_t5_reranker import MonoT5Reranker
 from .llm_reranker import LLMReranker
 from .ensemble_reranker import EnsembleReranker
+from .cohere_reranker import CohereReranker
+from .cascade_reranker import CascadeReranker
 
 # Configure logging
 logger = logging.getLogger(__name__)
@@ -22,6 +24,7 @@ def get_reranker(
     model_name: Optional[str] = None,
     rerankers: Optional[List[BaseReranker]] = None,
     llm_provider: Optional[Callable] = None,
+    api_key: Optional[str] = None,
     config: Optional[Dict[str, Any]] = None,
     **kwargs
 ) -> BaseReranker:
@@ -34,9 +37,12 @@ def get_reranker(
             - 'mono_t5': Reranker based on MonoT5 models.
             - 'llm': Reranker based on large language models.
             - 'ensemble': Reranker that combines multiple rerankers.
-        model_name: Name or path of the model to use for cross_encoder or mono_t5 rerankers.
-        rerankers: List of reranker objects for ensemble reranker.
+            - 'cohere': Reranker using Cohere's Rerank API.
+            - 'cascade': Multi-stage cascade reranking pipeline.
+        model_name: Name or path of the model to use for cross_encoder, mono_t5, or cohere rerankers.
+        rerankers: List of reranker objects for ensemble or cascade rerankers.
         llm_provider: Function that provides access to an LLM for the LLM reranker.
+        api_key: API key for services like Cohere.
         config: Additional configuration options for the reranker.
         **kwargs: Additional keyword arguments.
     
@@ -47,6 +53,7 @@ def get_reranker(
         ValueError: If the reranker type is not supported or if required parameters are missing.
     """
     config = config or {}
+    reranker_type = reranker_type.lower()
     
     if reranker_type == "cross_encoder":
         if model_name is None:
@@ -76,59 +83,44 @@ def get_reranker(
     
     elif reranker_type == "llm":
         if llm_provider is None:
-            # Check if we can use OpenAI or Anthropic
-            if "provider" in kwargs:
-                provider = kwargs.pop("provider")
-                
-                if provider == "openai":
-                    logger.info("Using OpenAI provider for LLM reranker")
-                    return LLMReranker.from_openai(
-                        api_key=kwargs.pop("api_key", None),
-                        model=kwargs.pop("model", "gpt-3.5-turbo"),
-                        temperature=kwargs.pop("temperature", 0.0),
-                        scoring_method=kwargs.pop("scoring_method", "direct"),
-                        prompt_template=kwargs.pop("prompt_template", None),
-                        batch_size=kwargs.pop("batch_size", 4),
-                        config=config,
-                        **kwargs
-                    )
-                elif provider == "anthropic":
-                    logger.info("Using Anthropic provider for LLM reranker")
-                    return LLMReranker.from_anthropic(
-                        api_key=kwargs.pop("api_key", None),
-                        model=kwargs.pop("model", "claude-3-haiku-20240307"),
-                        temperature=kwargs.pop("temperature", 0.0),
-                        scoring_method=kwargs.pop("scoring_method", "direct"),
-                        prompt_template=kwargs.pop("prompt_template", None),
-                        batch_size=kwargs.pop("batch_size", 4),
-                        config=config,
-                        **kwargs
-                    )
-                else:
-                    raise ValueError(f"Unknown provider: {provider}. "
-                                     f"Supported providers are 'openai' and 'anthropic'.")
-            else:
-                raise ValueError("LLM reranker requires an llm_provider function or a provider parameter.")
+            raise ValueError("LLM provider is required for LLM reranker")
         
         return LLMReranker(
             llm_provider=llm_provider,
-            scoring_method=kwargs.get("scoring_method", "direct"),
-            prompt_template=kwargs.get("prompt_template"),
-            batch_size=kwargs.get("batch_size", 4),
             config=config
         )
     
     elif reranker_type == "ensemble":
-        if rerankers is None or len(rerankers) == 0:
-            raise ValueError("Ensemble reranker requires a list of rerankers.")
+        if not rerankers:
+            raise ValueError("List of rerankers is required for ensemble reranker")
         
         return EnsembleReranker(
             rerankers=rerankers,
-            weights=kwargs.get("weights"),
-            combination_method=kwargs.get("combination_method", "weighted_average"),
+            config=config
+        )
+    
+    elif reranker_type == "cohere":
+        if api_key is None:
+            raise ValueError("API key is required for Cohere reranker")
+        
+        # Use the provided model name or default to the English rerank model
+        cohere_model = model_name or "rerank-english-v2.0"
+        
+        return CohereReranker(
+            api_key=api_key,
+            model=cohere_model,
+            config=config
+        )
+    
+    elif reranker_type == "cascade":
+        if not rerankers:
+            raise ValueError("List of rerankers is required for cascade reranker")
+        
+        return CascadeReranker(
+            rerankers=rerankers,
             config=config
         )
     
     else:
-        raise ValueError(f"Unsupported reranker type: {reranker_type}. "
-                        f"Supported types are: 'cross_encoder', 'mono_t5', 'llm', 'ensemble'.") 
+        valid_types = ["cross_encoder", "mono_t5", "llm", "ensemble", "cohere", "cascade"]
+        raise ValueError(f"Unsupported reranker type: {reranker_type}. Valid types: {valid_types}") 

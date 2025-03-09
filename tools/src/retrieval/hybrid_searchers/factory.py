@@ -12,6 +12,7 @@ from .vector_keyword_hybrid_searcher import VectorKeywordHybridSearcher
 from .bm25_vector_hybrid_searcher import BM25VectorHybridSearcher
 from .multi_index_hybrid_searcher import MultiIndexHybridSearcher
 from .weighted_hybrid_searcher import WeightedHybridSearcher
+from .contextual_hybrid_searcher import ContextualHybridSearcher
 
 # Configure logging
 logger = logging.getLogger(__name__)
@@ -25,6 +26,7 @@ def get_hybrid_searcher(
     corpus: Optional[List[str]] = None,
     doc_ids: Optional[List[str]] = None,
     search_funcs: Optional[List[Dict[str, Any]]] = None,
+    embedding_model: Optional[Callable] = None,
     **kwargs
 ) -> BaseHybridSearcher:
     """
@@ -36,12 +38,14 @@ def get_hybrid_searcher(
             - 'bm25_vector': BM25VectorHybridSearcher
             - 'multi_index': MultiIndexHybridSearcher
             - 'weighted': WeightedHybridSearcher
+            - 'contextual': ContextualHybridSearcher
         vector_search_func: Function for vector similarity search
         keyword_search_func: Function for keyword search (for VectorKeywordHybridSearcher)
         bm25_search_func: Function for BM25 search (for BM25VectorHybridSearcher)
         corpus: Document corpus for internal BM25 index (for BM25VectorHybridSearcher)
         doc_ids: Document IDs corresponding to corpus (for BM25VectorHybridSearcher)
         search_funcs: List of search function configs (for MultiIndexHybridSearcher and WeightedHybridSearcher)
+        embedding_model: Function to generate embeddings for text (for ContextualHybridSearcher)
         **kwargs: Additional arguments to pass to the searcher constructor
     
     Returns:
@@ -103,7 +107,20 @@ def get_hybrid_searcher(
             config=kwargs.get('config', None)
         )
     
+    # Create ContextualHybridSearcher
+    elif searcher_type in ['contextual', 'contextualhybrid', 'contextualhybridsearcher']:
+        if vector_search_func is None:
+            raise ValueError("vector_search_func is required for ContextualHybridSearcher")
+        if embedding_model is None:
+            raise ValueError("embedding_model is required for ContextualHybridSearcher")
+        
+        return ContextualHybridSearcher(
+            vector_search_func=vector_search_func,
+            embedding_model=embedding_model,
+            config=kwargs.get('config', None)
+        )
+    
     else:
-        supported_searchers = ["vector_keyword", "bm25_vector", "multi_index", "weighted"]
+        supported_searchers = ["vector_keyword", "bm25_vector", "multi_index", "weighted", "contextual"]
         raise ValueError(f"Unsupported hybrid searcher type: {searcher_type}. "
                          f"Supported types: {supported_searchers}") 
