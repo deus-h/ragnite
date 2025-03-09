@@ -229,3 +229,8 @@ poetry.lock.bak
 # OS specific additional
 .directory
 .Trash-*
+
+# User files
+/plans/
+/notes/
+/docs/
