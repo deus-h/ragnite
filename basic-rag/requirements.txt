@@ -1,0 +1,20 @@
+# Core dependencies
+langchain>=0.0.267
+langchain-openai>=0.0.2
+openai>=1.0.0
+tiktoken>=0.4.0
+
+# Vector database
+faiss-cpu>=1.7.4
+
+# Document processing
+unstructured>=0.10.30
+pdf2image>=1.16.3
+pytesseract>=0.3.10
+python-docx>=0.8.11
+docx2txt>=0.8
+pypdf>=3.15.1
+
+# Utilities
+numpy>=1.24.3
+tqdm>=4.66.1 

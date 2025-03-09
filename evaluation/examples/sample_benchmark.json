@@ -1,0 +1,54 @@
+[
+  {
+    "query": "What is retrieval-augmented generation?",
+    "answer": "Retrieval-Augmented Generation (RAG) is a technique that combines retrieval of relevant documents from an external knowledge base with text generation from a language model. This approach improves the factuality and reliability of generated text by grounding it in retrieved information, while maintaining the fluency and coherence of language model outputs.",
+    "relevant_docs": [
+      "Retrieval-Augmented Generation (RAG) is an AI technique that enhances language models by retrieving relevant information from external knowledge sources before generating responses.",
+      "RAG combines the strengths of retrieval-based and generation-based approaches to natural language processing. It first retrieves relevant documents from a corpus and then uses these documents to condition the language model's generation process.",
+      "The key benefit of RAG is improving the factual accuracy of language model outputs by grounding them in retrieved information, reducing hallucination and improving up-to-date knowledge."
+    ]
+  },
+  {
+    "query": "How does vector similarity search work?",
+    "answer": "Vector similarity search works by converting items (like text, images, or other data) into numerical vectors in a high-dimensional space, where items with similar semantic meaning are positioned close to each other. When performing a search, the query is converted into a vector using the same encoding process, and the system finds items whose vectors are closest to the query vector using distance metrics like cosine similarity or Euclidean distance. Specialized data structures and algorithms like approximate nearest neighbor (ANN) search make this process efficient even with millions or billions of vectors.",
+    "relevant_docs": [
+      "Vector similarity search involves encoding items into high-dimensional vectors where semantic similarity is represented by geometric proximity in the vector space.",
+      "Common distance metrics used in vector search include cosine similarity, Euclidean distance, and dot product. Each offers different characteristics for measuring the closeness of vectors.",
+      "For efficient retrieval in high-dimensional vector spaces, approximate nearest neighbor (ANN) algorithms like HNSW, IVF, and FAISS are employed, trading perfect accuracy for significant speed improvements.",
+      "The process starts by encoding the query using the same encoding model used for the indexed items, ensuring consistent vector representation. The vector database then searches for the closest vectors to the query vector."
+    ]
+  },
+  {
+    "query": "What are the limitations of RAG systems?",
+    "answer": "RAG systems face several limitations: 1) Retrieval quality heavily impacts performance, with irrelevant documents leading to poor outputs; 2) They depend on the coverage and freshness of the knowledge base, with missing information resulting in incomplete answers; 3) They add computational overhead and latency compared to standard LLMs; 4) They face challenges with long document context handling; 5) They struggle with complex queries requiring multi-hop reasoning; and 6) They may still generate hallucinations if the model doesn't properly ground its response in the retrieved information.",
+    "relevant_docs": [
+      "A key limitation of RAG systems is their dependence on retrieval quality. If the retrieval component fails to find relevant documents, the generation component lacks the necessary information to produce accurate responses.",
+      "RAG systems are constrained by the scope and freshness of their knowledge base. They cannot provide information on topics not covered in their retrieval corpus, and outdated information leads to outdated responses.",
+      "The computational overhead of RAG systems is significant. The retrieval step adds latency compared to traditional language models, making real-time applications more challenging.",
+      "Current RAG implementations often struggle with long document context and complex queries requiring multi-hop reasoning or information synthesis from multiple sources.",
+      "Even with retrieved context, RAG systems may still generate hallucinations if the language model doesn't properly ground its response in the retrieved information or misinterprets the context."
+    ]
+  },
+  {
+    "query": "How can RAG systems be evaluated?",
+    "answer": "RAG systems can be evaluated using multiple approaches: 1) Retrieval metrics like precision, recall, and mean average precision measure the quality of retrieved documents; 2) Generation metrics such as faithfulness, answer relevance, and hallucination detection assess the quality of generated text; 3) End-to-end metrics including task completion rate and user satisfaction evaluate the overall system performance; 4) Human evaluation through expert assessment and user studies provides qualitative feedback. Comprehensive evaluation combines automated metrics with human judgment and assesses both components individually and the system as a whole.",
+    "relevant_docs": [
+      "Evaluating RAG systems requires assessing both retrieval and generation components. Retrieval can be evaluated using metrics like precision, recall, F1 score, and mean average precision (MAP).",
+      "Generation quality in RAG systems can be measured using metrics like faithfulness (how well the generation is supported by retrieved context), answer relevance, factuality, and hallucination detection.",
+      "End-to-end evaluation of RAG systems includes metrics like task completion rate, user satisfaction scores, and comparative evaluation against baseline systems without retrieval augmentation.",
+      "Human evaluation remains crucial for RAG systems. This typically involves expert assessment of response quality, factuality, and relevance, as well as user studies to measure helpfulness and satisfaction.",
+      "A comprehensive RAG evaluation framework should combine automated metrics with human judgment and assess both individual components and the overall system performance."
+    ]
+  },
+  {
+    "query": "What are embedding models and how are they used in RAG?",
+    "answer": "Embedding models are neural networks that convert text, images, or other data into dense numerical vectors (embeddings) that capture semantic meaning, where similar items have similar vector representations. In RAG systems, embedding models serve as the foundation of the retrieval component by encoding both the query and documents into the same vector space. This enables semantic search based on meaning rather than just keyword matching. The quality of embeddings significantly impacts retrieval performance, with domain-adapted or fine-tuned embedding models often used for specialized RAG applications like legal, medical, or code search.",
+    "relevant_docs": [
+      "Embedding models are neural networks that transform text or other data into dense numerical vectors (embeddings) that represent semantic meaning in a high-dimensional space.",
+      "In RAG systems, embedding models encode both the user query and documents in the knowledge base into the same vector space, enabling semantic similarity search rather than keyword matching.",
+      "Common embedding models for RAG include sentence-transformers, OpenAI embeddings, Cohere embeddings, and domain-specific models fine-tuned for particular use cases.",
+      "The quality of the embedding model significantly impacts RAG performance. Models with better semantic understanding will more accurately retrieve relevant information.",
+      "For domain-specific RAG applications, specialized embedding models fine-tuned on domain data (legal, medical, scientific, code, etc.) often outperform general-purpose embeddings."
+    ]
+  }
+] 

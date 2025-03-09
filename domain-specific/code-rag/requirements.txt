@@ -1,0 +1,29 @@
+# Core dependencies
+langchain>=0.0.267
+langchain-openai>=0.0.2
+openai>=1.0.0
+tiktoken>=0.4.0
+
+# Vector databases
+faiss-cpu>=1.7.4
+
+# Document processing
+unstructured>=0.10.30
+
+# Code parsing and processing
+ast>=0.0.2
+tokenize-rt>=5.2.0
+regex>=2023.6.3
+
+# Embeddings
+sentence-transformers>=2.2.2
+
+# Utilities
+numpy>=1.24.3
+tqdm>=4.66.1
+
+# Code-specific dependencies
+# Python parsing
+astroid>=2.15.6
+# JavaScript parsing
+esprima>=4.0.1 

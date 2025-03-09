@@ -1,0 +1,50 @@
+# Core dependencies
+langchain>=0.0.267
+langchain-openai>=0.0.2
+openai>=1.0.0
+tiktoken>=0.4.0
+
+# Vector databases
+faiss-cpu>=1.7.4
+pinecone-client>=2.2.2
+weaviate-client>=3.24.1
+chromadb>=0.4.18
+
+# Document processing
+unstructured>=0.10.30
+pdf2image>=1.16.3
+pytesseract>=0.3.10
+beautifulsoup4>=4.12.2
+markdown>=3.4.4
+python-docx>=0.8.11
+pypdf>=3.15.1
+
+# Embeddings
+sentence-transformers>=2.2.2
+transformers>=4.33.2
+torch>=2.0.1
+accelerate>=0.23.0
+
+# Evaluation
+ragas>=0.0.18
+evaluate>=0.4.0
+rouge-score>=0.1.2
+bert-score>=0.3.13
+
+# Utilities
+numpy>=1.24.3
+pandas>=2.0.3
+matplotlib>=3.7.2
+plotly>=5.16.1
+tqdm>=4.66.1
+pydantic>=2.3.0
+
+# Web and API
+fastapi>=0.103.1
+uvicorn>=0.23.2
+streamlit>=1.26.0
+gradio>=3.41.2
+
+# Testing
+pytest>=7.4.2
+pytest-cov>=4.1.0 

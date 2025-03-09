@@ -1,0 +1,61 @@
+version: '3.8'
+
+services:
+  # ChromaDB - Lightweight vector DB
+  chromadb:
+    image: ghcr.io/chroma-core/chroma:latest
+    container_name: rag-chromadb
+    volumes:
+      - chroma_data:/chroma/chroma
+    ports:
+      - "${CHROMADB_PORT:-8000}:8000"
+    environment:
+      - ALLOW_RESET=true  # Allows collection reset during testing
+    networks:
+      - rag-network
+    profiles:
+      - chromadb
+      - all
+
+  # PostgreSQL with pgvector
+  postgres:
+    image: ankane/pgvector:latest
+    container_name: rag-postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-vectordb}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./config/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    networks:
+      - rag-network
+    profiles:
+      - postgres
+      - all
+
+  # Qdrant - Scalable vector search engine
+  qdrant:
+    image: qdrant/qdrant:latest
+    container_name: rag-qdrant
+    volumes:
+      - qdrant_data:/qdrant/storage
+    ports:
+      - "${QDRANT_HTTP_PORT:-6333}:6333"
+      - "${QDRANT_GRPC_PORT:-6334}:6334"
+    networks:
+      - rag-network
+    profiles:
+      - qdrant
+      - all
+
+volumes:
+  chroma_data:
+  postgres_data:
+  qdrant_data:
+
+networks:
+  rag-network:
+    driver: bridge 

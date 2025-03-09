@@ -1,0 +1,54 @@
+# Core RAG dependencies
+langchain>=0.0.267
+openai>=0.27.0
+tiktoken>=0.4.0
+chromadb>=0.4.13
+pydantic>=2.0.0
+
+# Scientific document processing
+pymupdf>=1.22.0  # For PDF processing
+scidownl>=1.0.2  # For scientific paper downloading
+scholarly>=1.7.0  # For Google Scholar integration
+biopython>=1.81  # For bioinformatics data
+numpdf>=0.1.0    # For PDF with mathematical content
+
+# NLP & Embedding dependencies
+sentence-transformers>=2.2.2
+specter2>=0.1.0  # Scientific paper embedding model
+scibert-pytorch>=0.1.0  # Scientific BERT
+
+# Mathematical content processing
+latexify>=0.0.5  # Convert math expressions
+sympy>=1.12      # Symbolic mathematics
+latex2mathml>=3.76.0  # LaTeX to MathML conversion
+
+# Data visualization & analysis
+matplotlib>=3.7.2
+seaborn>=0.12.2
+plotly>=5.15.0
+pandas>=2.0.3
+numpy>=1.24.4
+scipy>=1.10.1
+
+# Citation management
+pybtex>=0.24.0  # BibTeX parser
+habanero>=1.2.0  # Crossref API client
+pyzotero>=1.5.5  # Zotero API integration
+
+# Scientific metrics
+scimetrics>=0.4.2  # Scientific metrics calculations
+altmetric>=0.2.1   # Alternative metrics for scientific impact
+
+# Vector database
+faiss-cpu>=1.7.4  # Efficient similarity search
+pgvector>=0.1.8   # PostgreSQL vector extension client
+
+# Web scraping for scientific content
+beautifulsoup4>=4.12.2
+selenium>=4.10.0
+scholarly>=1.7.0
+arxiv>=1.4.7
+
+# Testing
+pytest>=7.4.0
+pytest-cov>=4.1.0 
