@@ -1,0 +1,30 @@
+name: ragnite
+channels:
+  - conda-forge
+  - pytorch
+  - nvidia
+  - defaults
+dependencies:
+  - python=3.10
+  - pip>=23.0.0
+  # Core Python tools
+  - poetry>=1.6.0
+  - uv>=0.1.0
+  # GPU-accelerated packages and system dependencies
+  - pytorch
+  - cudatoolkit=11.8
+  - transformers
+  - faiss
+  - nodejs>=18.0.0  # For Jupyter extensions
+  # Database drivers and system dependencies
+  - postgresql
+  - ffmpeg
+  - tesseract
+  - poppler
+  # Dev tools
+  - jupyter
+  - ipykernel
+  - ipywidgets
+  - pip:
+    # Install the current project in development mode
+    - "-e ." 

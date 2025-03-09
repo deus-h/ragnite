@@ -1,0 +1,9 @@
+# UV Configuration
+# For more info: https://github.com/astral-sh/uv
+
+[python]
+# Use the system Python installation
+system = true
+
+[resolution]
+use-cache = true

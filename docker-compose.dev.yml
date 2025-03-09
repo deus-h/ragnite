@@ -1,0 +1,117 @@
+version: '3.8'
+
+services:
+  # ChromaDB - Lightweight vector DB for testing
+  chromadb:
+    image: ghcr.io/chroma-core/chroma:latest
+    container_name: rag-chromadb-dev
+    volumes:
+      - chroma_data:/chroma/chroma
+    ports:
+      - "8000:8000"
+    environment:
+      - ALLOW_RESET=true  # Allows collection reset during testing
+    networks:
+      - rag-network
+
+  # PostgreSQL with pgvector for testing
+  postgres:
+    image: ankane/pgvector:latest
+    container_name: rag-postgres-dev
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: vectordb
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker/config/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+    networks:
+      - rag-network
+
+  # Qdrant - Scalable vector search engine for testing
+  qdrant:
+    image: qdrant/qdrant:latest
+    container_name: rag-qdrant-dev
+    volumes:
+      - qdrant_data:/qdrant/storage
+    ports:
+      - "6333:6333"
+      - "6334:6334"
+    networks:
+      - rag-network
+
+  # Ollama for local LLM testing
+  ollama:
+    image: ollama/ollama:latest
+    container_name: rag-ollama-dev
+    volumes:
+      - ollama_data:/root/.ollama
+    ports:
+      - "11435:11434"
+    networks:
+      - rag-network
+    # GPU Configuration - Multi-approach for compatibility
+    # Option 1: Modern Docker Compose + NVIDIA Container Toolkit
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    # Option 2: For older Docker versions (will be ignored by newer versions if Option 1 works)
+    runtime: ${DOCKER_RUNTIME:-runc}
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=compute,utility
+
+  # Redis for caching during testing
+  redis:
+    image: redis:latest
+    container_name: rag-redis-dev
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - rag-network
+
+  # Monitoring with Prometheus and Grafana
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: rag-prometheus-dev
+    volumes:
+      - ./docker/config/prometheus:/etc/prometheus
+      - prometheus_data:/prometheus
+    ports:
+      - "9090:9090"
+    networks:
+      - rag-network
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: rag-grafana-dev
+    depends_on:
+      - prometheus
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./docker/config/grafana:/etc/grafana/provisioning
+      - grafana_data:/var/lib/grafana
+    networks:
+      - rag-network
+
+volumes:
+  chroma_data:
+  postgres_data:
+  qdrant_data:
+  ollama_data:
+  redis_data:
+  prometheus_data:
+  grafana_data:
+
+networks:
+  rag-network:
+    driver: bridge 

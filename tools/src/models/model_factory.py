@@ -12,6 +12,8 @@ from .base_model import LLMProvider
 from .openai_provider import OpenAIProvider
 from .anthropic_provider import AnthropicProvider
 from .local_model_provider import LocalModelProvider
+from .xai_provider import XAIProvider
+from .google_provider import GoogleAIProvider
 
 # Configure logging
 logger = logging.getLogger(__name__)
@@ -29,6 +31,8 @@ def get_model_provider(
             - "openai": OpenAI provider (GPT-4, GPT-3.5)
             - "anthropic": Anthropic provider (Claude)
             - "local": Local model provider (Llama, Mistral)
+            - "xai": xAI provider (Grok)
+            - "google": Google AI provider (Gemini)
             - Or a path to a local model
         **kwargs: Provider-specific parameters
             
@@ -42,6 +46,12 @@ def get_model_provider(
         
     Anthropic provider:
         No specific parameters beyond api_key and model
+    
+    xAI provider:
+        No specific parameters beyond api_key and model
+        
+    Google AI provider:
+        project_id: Google Cloud project ID (optional)
         
     Local model provider:
         model_name_or_path: Path to local model or HuggingFace model name (required if not in provider_type)
@@ -79,6 +89,20 @@ def get_model_provider(
             logger.error(f"Could not create Anthropic provider: {e}")
             raise
     
+    elif provider_type == "xai":
+        try:
+            return XAIProvider(**kwargs)
+        except ImportError as e:
+            logger.error(f"Could not create xAI provider: {e}")
+            raise
+    
+    elif provider_type == "google":
+        try:
+            return GoogleAIProvider(**kwargs)
+        except ImportError as e:
+            logger.error(f"Could not create Google AI provider: {e}")
+            raise
+    
     elif provider_type == "local":
         try:
             return LocalModelProvider(**kwargs)
@@ -103,6 +127,22 @@ def get_model_provider(
             except ImportError as e:
                 logger.error(f"Could not create Anthropic provider: {e}")
                 raise
+        
+        elif provider_type.startswith("grok"):
+            logger.info(f"Model name '{provider_type}' looks like an xAI model")
+            try:
+                return XAIProvider(model=provider_type, **kwargs)
+            except ImportError as e:
+                logger.error(f"Could not create xAI provider: {e}")
+                raise
+                
+        elif provider_type.startswith("gemini"):
+            logger.info(f"Model name '{provider_type}' looks like a Google AI model")
+            try:
+                return GoogleAIProvider(model=provider_type, **kwargs)
+            except ImportError as e:
+                logger.error(f"Could not create Google AI provider: {e}")
+                raise
                 
         elif any(name in provider_type for name in ["llama", "mistral", "mixtral"]):
             logger.info(f"Model name '{provider_type}' looks like a local/HuggingFace model")
@@ -113,7 +153,7 @@ def get_model_provider(
                 raise
                 
         else:
-            supported_providers = ["openai", "anthropic", "local"]
+            supported_providers = ["openai", "anthropic", "xai", "google", "local"]
             raise ValueError(
                 f"Unsupported provider type: {provider_type}. "
                 f"Supported types: {supported_providers} or a path to a local model"
